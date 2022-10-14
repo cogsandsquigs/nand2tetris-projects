@@ -51,18 +51,16 @@ CHIP ALU {
     );
     
     // Create !x for later
-    Not16(in=xIfZeroed, out=notX);
+    Not16(in=xIfZeroed, out=xIfZeroedAndNotted);
 
     // Set x to !x if nx is 1, otherwise set x to itself
     Mux16(
         a=xIfZeroed,
-        b=notX,
+        b=xIfZeroedAndNotted,
         sel=nx,
-        out=processedX
+        out=finalX
     );
     
-    // Now do the same thing for y
-
     // Set y to 0 if zy is 1, otherwise set y to itself
     Mux16(
         a=y,
@@ -72,26 +70,26 @@ CHIP ALU {
     );
 
     // Create !y for later
-    Not16(in=yIfZeroed, out=notY);
+    Not16(in=yIfZeroed, out=yIfZeroedAndNotted);
 
     // Set y to !y if ny is 1, otherwise set y to itself
     Mux16(
         a=yIfZeroed,
-        b=notY,
+        b=yIfZeroedAndNotted,
         sel=ny,
-        out=processedY
+        out=finalY
     );
 
     // Create x & y for later
-    And16(a=processedX, b=processedY, out=xAndY);
+    And16(a=finalX, b=finalY, out=xAndY);
 
     // Create x + y for later
-    Add16(a=processedX, b=processedY, out=xPlusY);
+    Add16(a=finalX, b=finalY, out=xPlusY);
 
     // Set out to x + y if f is 1, otherwise set out to x & y
     Mux16(
-        a=xPlusY,
-        b=xAndY,
+        a=xAndY,
+        b=xPlusY,
         sel=f,
         out=operationResult
     );
@@ -111,7 +109,8 @@ CHIP ALU {
     );
 
     // Set zr to 1 if out is 0, otherwise set zr to 0
-    Or8Way(in=out0to7, out=zr1);
-    Or8Way(in=out8to15, out=zr2);
-    Or(a=zr1, b=zr2, out=zr);
+    Or8Way(in=out0to7, out=zrNot1);
+    Or8Way(in=out8to15, out=zrNot2);
+    Or(a=zrNot1, b=zrNot2, out=zrNot);
+    Not(in=zrNot, out=zr);
 }
