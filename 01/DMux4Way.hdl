@@ -17,21 +17,14 @@ CHIP DMux4Way {
 
     PARTS:
     // Just necessary things
-    Not(in=sel[0], out=notSel0);
     Not(in=sel[1], out=notSel1);
 
-    // Creating the select lines for all 
-    // of the a, b, c, and d inputs.
-    And(a=notSel0, b=notSel1, out=selA);
-    And(a=sel[0], b=notSel1, out=selB);
-    And(a=notSel0, b=sel[1], out=selC);
-    And(a=sel[0], b=sel[1], out=selD);
+    // Creating input lines for the output pairs
+    // (a, b) and (c, d).
+    And(a=in, b=notSel1, out=inAB);
+    And(a=in, b=sel[1], out=inCD);
 
-    // Using the select lines to select the
-    // correct input for each output.
-    And(a=in, b=selA, out=a);
-    And(a=in, b=selB, out=b);
-    And(a=in, b=selC, out=c);
-    And(a=in, b=selD, out=d);
-
+    // Use DMux to output the correct values
+    DMux(in=inAB, sel=sel[0], a=a, b=b);
+    DMux(in=inCD, sel=sel[0], a=c, b=d);
 }

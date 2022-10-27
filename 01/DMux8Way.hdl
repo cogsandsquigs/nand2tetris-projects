@@ -17,44 +17,14 @@ CHIP DMux8Way {
 
     PARTS:
     // Just necessary things
-    Not(in=sel[0], out=notSel0);
-    Not(in=sel[1], out=notSel1);
     Not(in=sel[2], out=notSel2);
 
-    // Creating the select lines for all 
-    // of the inputs.
-    And(a=notSel0, b=notSel1, out=tmpA);
-    And(a=tmpA, b=notSel2, out=selA);
+    // Create the input for the output tuples
+    // (a, b, c, d) and (e, f, g, h)
+    And(a=in, b=notSel2, out=inABCD);
+    And(a=in, b=sel[2], out=inEFGH);
 
-    And(a=sel[0], b=notSel1, out=tmpB);
-    And(a=tmpB, b=notSel2, out=selB);
-
-    And(a=notSel0, b=sel[1], out=tmpC);
-    And(a=tmpC, b=notSel2, out=selC);
-
-    And(a=sel[0], b=sel[1], out=tmpD);
-    And(a=tmpD, b=notSel2, out=selD);
-
-    And(a=notSel0, b=notSel1, out=tmpE);
-    And(a=tmpE, b=sel[2], out=selE);
-
-    And(a=sel[0], b=notSel1, out=tmpF);
-    And(a=tmpF, b=sel[2], out=selF);
-
-    And(a=notSel0, b=sel[1], out=tmpG);
-    And(a=tmpG, b=sel[2], out=selG);
-
-    And(a=sel[0], b=sel[1], out=tmpH);
-    And(a=tmpH, b=sel[2], out=selH);
-
-    // Finally, return everything to the
-    // output.
-    And(a=in, b=selA, out=a);
-    And(a=in, b=selB, out=b);
-    And(a=in, b=selC, out=c);
-    And(a=in, b=selD, out=d);
-    And(a=in, b=selE, out=e);
-    And(a=in, b=selF, out=f);
-    And(a=in, b=selG, out=g);
-    And(a=in, b=selH, out=h);
+    // Output the correct values
+    DMux4Way(in=inABCD, sel=sel[0..1], a=a, b=b, c=c, d=d);
+    DMux4Way(in=inEFGH, sel=sel[0..1], a=e, b=f, c=g, d=h);
 }
