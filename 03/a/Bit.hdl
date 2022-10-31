@@ -14,5 +14,8 @@ CHIP Bit {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    // If we need to update the state, then the input for the D-Flip-Flop is `in`, otherwise
+    // it's the previous input.
+    Mux(a=dffOut, b=in, sel=load, out=dffIn);
+    DFF(in=dffIn, out=out, out=dffOut);
 }
