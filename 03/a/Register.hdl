@@ -14,14 +14,5 @@ CHIP Register {
     OUT out[16];
 
     PARTS:
-    // If we need to update the state, then the input for the D-Flip-Flop is `in`, otherwise
-    // it's the previous input.
-    Mux16(a=dffOut, b=in, sel=load, out=dffIn);
-
-    // Also need to do 16 of these
-    DFF(
-        in=dffIn[0], 
-        out=out[0],
-        out=dffOut[0]
-    );
+    // Basically, just use 16 Bits
 }
