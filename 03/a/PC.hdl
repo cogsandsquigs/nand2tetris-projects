@@ -16,5 +16,19 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // The register that holds the PC value;
+    Register(in=PCIn, out=PCOut, out=out, load=PCLoad);
+
+    // We need to load in data if the load bit is set, if the
+    // reset bit is set or if the inc bit is set.
+    Or(a=load, b=reset, out=loadOrReset);
+    Or(a=loadOrReset, b=inc, out=PCLoad);
+
+    // We need to increment the data if the inc bit is set
+    Inc16(in=PCOut, out=PCIncr);
+
+    // We need to be careful to make sure that `reset`
+    // overrides `load`, and `load` overrides `inc`.
+    Mux16(a=PCIncr, b=in, sel=load, out=incrOrIn);
+    Mux16(a=incrOrIn, b=false, sel=reset, out=PCIn);
 }
