@@ -15,5 +15,29 @@ CHIP RAM16K {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // The RAM512 chips
+    RAM4K(in=in, load=ram0Load, address=address[0..11], out=ram0Out);
+    RAM4K(in=in, load=ram1Load, address=address[0..11], out=ram1Out);
+    RAM4K(in=in, load=ram2Load, address=address[0..11], out=ram2Out);
+    RAM4K(in=in, load=ram3Load, address=address[0..11], out=ram3Out);
+
+    // DMux the load signal
+    DMux4Way(
+        in=load,
+        sel=address[12..13],
+        a=ram0Load,
+        b=ram1Load,
+        c=ram2Load,
+        d=ram3Load
+    );
+
+    // Mux the output
+    Mux4Way16(
+        a=ram0Out,
+        b=ram1Out,
+        c=ram2Out,
+        d=ram3Out,
+        sel=address[12..13],
+        out=out
+    );
 }
