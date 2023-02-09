@@ -37,12 +37,14 @@
 		D=1 // D!=0
 
 	(END_KEY_PRESSED)
-	
+
 	@color
 	M=D // color=1 if a key is pressed, 0 otherwise
 
-	@counter
-	M=16384 // counter=0x4000
+	@16384
+	D=A // D=0x4000
+	@color 
+	M=D // counter=0x4000
 
 	(LOOP)
 		@color // Get the color
@@ -58,9 +60,9 @@
 
 		// Check if we reached the end of the screen
 		D=M-24575 // D=counter-0x5FFF
-		
+
 		@LOOP
-		D;JGE // if D>=0 (counter>=0x1FFF), jump to LOOP
+		D;JGE // if D>=0 (counter-0x5FFF>=0), jump to LOOP
 
 	// Jump back to the start
 	@START
