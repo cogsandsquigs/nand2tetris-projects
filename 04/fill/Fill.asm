@@ -25,8 +25,7 @@
 	// Set `color` to 0 if a key is pressed, and to 1 otherwise
 	@KEY_PRESSED
 		D;JNE // if D!=0 (key pressed), jump to @color
-
-		@0
+		
 		D=0 // D=0
 
 		// Jump to the end of the if statement
@@ -34,7 +33,7 @@
 		0;JMP
 		
 		(KEY_PRESSED)
-		D=-1 // D!=0
+		D=-1 // D!=0, key pressed
 
 	(END_KEY_PRESSED)
 
@@ -43,7 +42,7 @@
 
 	@16384
 	D=A // D=0x4000
-	@0 
+	@1 
 	M=D // counter=0x4000
 
 	(LOOP)
@@ -65,7 +64,7 @@
 		D=M-D // D=counter-0x6000
 
 		@LOOP
-		D;JGT // if D > 0 (counter-0x6000>0), jump to LOOP
+		D;JLT // if D > 0 (counter-0x6000>0), jump to LOOP
 
 	// Jump back to the start
 	@START
