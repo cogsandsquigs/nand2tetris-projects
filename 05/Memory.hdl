@@ -27,14 +27,19 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Set up the memory locations. While we only need 24K of memory, I'm using 32K b/c im special :3.
-    // Yes, I know the CPU won't use the extra, but idc.
-    RAM16K(in=in, load=ram0Load, address=address[0..13], out=ram0Out);
-    RAM16K(in=in, load=ram1Load, address=address[0..13], out=ram1Out);
+    // Set up the memory locations.
+
+    // Memory 0x0000-0x3FFF is the RAM
+    RAM16K(in=in, load=loadRam, address=address[0..13], out=ramOut);
+    // Memory 0x4000-0x5FFF is the screen
+    Screen(in=in, load=loadScreen, address=address[0..12], out=screenOut);
+    // Memory 0x6000 is the keyboard
+    Keyboard(out=keyboardOut);
 
     // DMux the different ram loads to the correct chip.
-    DMux(in=load, sel=address[14], a=ram0Load, b=ram1Load);
+    DMux4Way(in=load, sel=address[13..14], a=loadRam0, b=loadRam1, c=loadScreen, d=loadKeyboard); // loadKeyboard is a dummy value, but if not used, the compiler will complain :(.
+    Or(a=loadRam0, b=loadRam1, out=loadRam);
 
     // Mux the correct output from the different chips.
-    Mux16(a=ram0Out, b=ram1Out, sel=address[14], out=out);
+    Mux4Way16(a=ramOut, b=ramOut, c=screenOut, d=keyboardOut, sel=address[13..14], out=out);
 }
