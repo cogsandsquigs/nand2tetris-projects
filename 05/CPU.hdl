@@ -47,7 +47,7 @@ CHIP CPU {
     Register(in=A_in, load=instruction[10], out=A_out);
 
     // The D register. The load input is decided by the d2 bit of the instruction.
-    Register(in=ALU_out, loa=instruction[11], out=D_out);
+    Register(in=ALU_out, load=instruction[11], out=D_out);
     
     // Get the Y input for the ALU. 
     // If the instruction is C-instruction, then the Y input is the A register output. Otherwise, the Y input is the M register output.
