@@ -41,7 +41,7 @@ CHIP CPU {
     PARTS:
 
     // The decision on what to let A_in become: either the instruction itself or the ALU output.
-    Mux16(a=, b=ALU_out, sel=instruction[10], out=A_in);
+    Mux16(a=instruction, b=ALU_out, sel=, out=A_in);
 
     // The A register. The load input is decided by the d1 bit of the instruction.
     Register(in=A_in, load=instruction[10], out=A_out);
