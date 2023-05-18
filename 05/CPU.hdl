@@ -40,23 +40,4 @@ CHIP CPU {
 
     PARTS:
 
-    // The decision on what to let A_in become: either the instruction itself or the ALU output.
-    Mux16(a=instruction, b=ALU_out, sel=, out=A_in);
-
-    // The A register. The load input is decided by the d1 bit of the instruction.
-    Register(in=A_in, load=instruction[5], out=A_out);
-
-    // The D register. The load input is decided by the d2 bit of the instruction.
-    Register(in=ALU_out, load=instruction[4], out=D_out);
-    
-    // Get the Y input for the ALU. 
-    // If the instruction is C-instruction, then the Y input is the A register output. Otherwise, the Y input is the M register output.
-    Mux16(a=A_out, b=inM, sel=instruction[12], out=ALU_y;
-
-    // The ALU. The instructions zx, nx, etc. are taken from c1-c6.
-    ALU(x=D_out, y=ALU_y, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALU_out, zr=ALU_eq0_flag, ng=ALU_neg_flag);
-
-    // Tell the memory to load the value from the ALU depending on the d3 bit of the instruction.
-    
-
 }
