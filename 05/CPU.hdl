@@ -40,4 +40,32 @@ CHIP CPU {
 
     PARTS:
 
+    // The program counter, storing the address of the next instruction to be executed.
+    // It takes the program from the A register, which holds the address of the next 
+    // instruction.
+    PC(in=A_out, load=_, inc=true, reset=reset, out=pc);
+
+    // The A register, storing data that can point to an address in memory.
+    ARegister(in=A_in, load=A_load, out=A_out, out=addressM);
+
+    // The D register, storing arbitrary data for an instruction or two.
+    DRegister(in=ALU_out, load=D_load, out=D_out);
+
+    /* DECODING */
+
+    // Decode if the D register should load:
+    // If the instruction is a C instruction, and the destination is set to D, then load D.
+    And(a=instruction[15], b=instruction[4], out=D_load);
+
+    // Decode the A/M input to the ALU:
+    // If the A bit is set, or if this is an A instruction, set the A/M input to the ALU to the A input.
+    Or(a=instruction[12], b=instruction[15], out=ALU_MA_sel);
+    
+
+    /* ALU */
+    // If the a bit is set, then use the A register as the input to the ALU.
+    Mux(a=inM, b=A_out, sel=ALU_MA_sel, out=ALU_MA_in);
+
+    // The ALU, performing the computation of the C instruction.
+    ALU(x=D_out, y=ALU_MA_in, zx=instruction[6], nx=instruction[7], zy=instruction[8], ny=instruction[9], f=instruction[10], no=instruction[11], out=ALU_out, zr=ALU_is_zero, ng=ALU_is_neg);
 }
