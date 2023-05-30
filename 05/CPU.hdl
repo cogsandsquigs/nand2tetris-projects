@@ -93,5 +93,5 @@ CHIP CPU {
 
     // The ALU, performing the computation of the C instruction.
     // Instruction bits 6-11 are the control bits for the ALU, mapping directly to the ALU control bits.
-    ALU(x=D_out, y=ALU_MA_in, zx=instruction[6], nx=instruction[7], zy=instruction[8], ny=instruction[9], f=instruction[10], no=instruction[11], out=ALU_out, zr=ALU_is_zero, ng=ALU_is_neg);
+    ALU(x=D_out, y=ALU_MA_in, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALU_out, zr=ALU_is_zero, ng=ALU_is_neg);
 }
