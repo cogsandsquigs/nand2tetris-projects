@@ -43,34 +43,34 @@ CHIP CPU {
     /* REGISTERS */
 
     // The program counter, storing the address of the next instruction to be executed.
-    // It takes the program from the A register, which holds the address of the next 
-    // instruction.
-    PC(in=A_out, load=PC_load, inc=true, reset=reset, out=pc);
+    // It takes the current program address from the A register, which holds the address
+    // of the next instruction.
+    PC(in=AOut, load=PCLoad, inc=true, reset=reset, out[0..14]=pc);
 
     // The A register, storing data that can point to an address in memory.
-    ARegister(in=A_in, load=A_load, out=A_out, out=addressM);
+    ARegister(in=AIn, load=ALoad, out=AOut, out[0..14]=addressM);
 
     // The D register, storing arbitrary data for an instruction or two.
-    DRegister(in=ALU_out, load=D_load, out=D_out);
+    DRegister(in=ALUOut, load=DLoad, out=DOut);
 
     /* DECODING */
 
     // Values to use for later
     // Is this instruction an A instruction?
-    Not(in=instruction[15], out=is_a_instruction);
+    Not(in=instruction[15], out=isAInstruction);
 
     // Decode what value to load into the A register:
     // If the instruction is not an A instruction (AKA C instruction, instruction[15]==1), then load the value of the ALU into the A register.
     // If the instruction is an A instruction (instruction[15]==0), then load the value of the instruction into the A register.
-    Mux16(a=ALU_out, b=instruction, sel=is_a_instruction, out=A_in);
+    Mux16(a=ALUOut, b=instruction, sel=isAInstruction, out=AIn);
 
     // Decode if the A register should load:
     // If the instruction is a A instruction (instruction[15]==0), or the destination is set to A (instruction[5]==1), then load A.
-    Or(a=is_a_instruction, b=instruction[5], out=A_load);
+    Or(a=isAInstruction, b=instruction[5], out=ALoad);
 
     // Decode if the D register should load:
     // If the instruction is a C instruction (instruction[15]==1), and the destination is set to D (instruction[4]==1), then load D.
-    And(a=instruction[15], b=instruction[4], out=D_load);
+    And(a=instruction[15], b=instruction[4], out=DLoad);
 
     // Decode if Memory should load:
     // If the instruction is a C instruction (instruction[15]==1), and the destination is set to M (instruction[3]==1), then load M.
@@ -89,9 +89,9 @@ CHIP CPU {
     // Get either A or M as input:
     // If the A bit is not set (instruction[12]==0), we use the memory input as input to the ALU.
     // If the A bit is set (instruction[12]==1), then use the A register as the input to the ALU.
-    Mux(a=inM, b=A_out, sel=instruction[12], out=ALU_MA_in);
+    Mux16(a=inM, b=AOut, sel=instruction[12], out=ALUMAIn);
 
     // The ALU, performing the computation of the C instruction.
     // Instruction bits 6-11 are the control bits for the ALU, mapping directly to the ALU control bits.
-    ALU(x=D_out, y=ALU_MA_in, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALU_out, zr=ALU_is_zero, ng=ALU_is_neg);
+    ALU(x=DOut, y=ALUMAIn, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALUOut, zr=ALUIsZero, ng=ALUIsNeg);
 }
