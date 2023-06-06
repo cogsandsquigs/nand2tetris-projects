@@ -88,8 +88,8 @@ CHIP CPU {
     And(a=ALUIsNotZero, b=ALUIsNotNeg, out=ALUIsPos);
 
     // Check the respective jump bits:
-    And(a=instruction[2], b=ALUIsZero, out=jumpIfNeg);
-    And(a=instruction[1], b=ALUIsNeg, out=jumpIfZero);
+    And(a=instruction[2], b=ALUIsNeg, out=jumpIfNeg);
+    And(a=instruction[1], b=ALUIsZero, out=jumpIfZero);
     And(a=instruction[0], b=ALUIsPos, out=jumpIfPos);
 
     // Check if we should jump:
@@ -103,11 +103,11 @@ CHIP CPU {
     /* ALU */
 
     // Get either A or M as input:
-    // If the A bit is not set (instruction[12]==1), we use the A register as input to the ALU.
-    // If the A bit is set (instruction[12]==0), then use the memory input as the input to the ALU.
-    Mux16(a=inM, b=AOut, sel=instruction[12], out=ALUMAIn);
+    // If the A bit is set (instruction[12]==0), we use the A register as input to the ALU.
+    // If the A bit is not set (instruction[12]==1), then use the memory input as the input to the ALU.
+    Mux16(a=AOut, b=inM, sel=instruction[12], out=ALUMAIn);
 
     // The ALU, performing the computation of the C instruction.
     // Instruction bits 6-11 are the control bits for the ALU, mapping directly to the ALU control bits.
-    ALU(x=DOut, y=ALUMAIn, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALUOut, zr=ALUIsZero, ng=ALUIsNeg);
+    ALU(x=DOut, y=ALUMAIn, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALUOut, out=outM, zr=ALUIsZero, ng=ALUIsNeg);
 }
