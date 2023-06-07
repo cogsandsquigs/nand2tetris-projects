@@ -12,3 +12,5 @@
 	path = "src/lib/mod.rs"
 
 [dependencies]
+miette = "5.9.0"
+thiserror = "1.0.40"
