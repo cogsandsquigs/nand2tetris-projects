@@ -8,11 +8,20 @@ use thiserror::Error;
 
 #[derive(Debug, Diagnostic, Error)]
 pub enum AssemblerError {
+    /// An error due to IO operations.
     #[error(transparent)]
     #[diagnostic(code(assembler::errors::io))]
     IoError {
         /// The source of the error.
         source: io::Error,
+    },
+
+    /// An error occured during parsing.
+    #[error(transparent)]
+    #[diagnostic(code(assembler::errors::parse))]
+    ParseError {
+        /// The source of the error.
+        source: nom::error::ParseError<dyn Span<'a>>,
     },
 }
 
